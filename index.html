@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Savva Coffee · سافا — Madinah</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Savva Coffee (سافا) — specialty coffee in Madinah, Saudi Arabia. Open 6:30AM–2AM daily. Cozy seats, calm mornings, drive-through, coffee that's never too bitter or too sweet.">
+<meta property="og:title" content="Savva Coffee · سافا — Madinah">
+<meta property="og:description" content="A day in Savva is what you need to be Savva. Specialty coffee, Madinah — open 6:30AM–2AM.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#8b9163">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23241c12'/%3E%3Cpath d='M28 45h40a4 4 0 0 1 4 4c0 10-6 18-14 18H42c-8 0-14-8-14-18a4 4 0 0 1 4-4Z' fill='none' stroke='%23e7d9a0' stroke-width='5'/%3E%3Cpath d='M70 48h6a8 8 0 0 1 0 16h-5' fill='none' stroke='%23e7d9a0' stroke-width='5'/%3E%3Cpath d='M38 40c-2-4 2-5 1-9M50 40c-2-4 2-5 1-9M62 40c-2-4 2-5 1-9' fill='none' stroke='%23e7d9a0' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,400..700&family=Manrope:wght@400;500;600;700;800&family=Tajawal:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f2e9d8;
+    --fg:#241c12;
+    --accent:#c4223a;
+    --gold:#d99a4e;
+    --line: rgba(36,28,18,.16);
+    --wrap: 1180px;
+    --gutter: clamp(18px, 5vw, 64px);
+  }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Manrope', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    transition:color .45s ease;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  img{ max-width:100%; }
+  [hidden]{ display:none!important; }
+  a{ color:inherit; }
+  .ar{ font-family:'Tajawal', sans-serif; direction:rtl; unicode-bidi:isolate; }
+
+  /* fixed noise texture */
+  .grain{
+    position:fixed; inset:0; z-index:2; pointer-events:none;
+    opacity:.05; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap{ max-width:var(--wrap); margin:0 auto; padding-inline:var(--gutter); }
+  section{ position:relative; padding-block: clamp(64px,10vw,140px); }
+
+  /* ---------- clock rail ---------- */
+  .clockrail{
+    position:fixed; right:0; top:0; bottom:0; width:64px;
+    display:flex; align-items:center; justify-content:center;
+    z-index:20; pointer-events:none;
+  }
+  .clockrail-track{
+    position:relative; width:2px; height:min(58vh,460px);
+    background:linear-gradient(var(--line),var(--line));
+  }
+  .clockrail-track::before,.clockrail-track::after{ content:''; }
+  .clockrail-dot{
+    position:absolute; left:50%; top:0; width:11px; height:11px; margin-left:-5.5px; margin-top:-5.5px;
+    border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
+    transition: background .3s ease;
+  }
+  .clockrail-time{
+    position:absolute; right:16px; top:0; transform:translateY(-50%);
+    font-family:'Fraunces',serif; font-size:13px; letter-spacing:.04em;
+    white-space:nowrap; color:var(--fg); opacity:.85;
+  }
+  @media (max-width: 860px){ .clockrail{ display:none; } }
+
+  /* ---------- status pill ---------- */
+  .status{
+    position:fixed; left:var(--gutter); top:18px; z-index:20;
+    display:flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    padding:8px 14px; border-radius:999px;
+    background:color-mix(in srgb, var(--bg) 70%, transparent);
+    border:1px solid var(--line);
+    backdrop-filter: blur(6px);
+    color:var(--fg);
+  }
+  .status i{ width:7px;height:7px;border-radius:50%; background:#3d8a4e; display:inline-block; flex:none; }
+  .status.closed i{ background:#8a3d3d; }
+
+  /* ---------- nav / brand mark corner ---------- */
+  .mark{
+    position:fixed; top:16px; right:16px; z-index:20;
+    width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line); font-family:'Fraunces',serif; font-weight:600; font-size:12px;
+    background:color-mix(in srgb, var(--bg) 70%, transparent);
+    backdrop-filter: blur(6px);
+  }
+  @media (max-width:860px){ .mark{ display:none; } }
+
+  /* ---------- hero ---------- */
+  .hero{ min-height:100svh; display:flex; flex-direction:column; justify-content:center; padding-top: calc(90px + env(safe-area-inset-top,0px)); }
+  .kicker{
+    font-size:12px; letter-spacing:.28em; text-transform:uppercase; opacity:.72;
+    display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .kicker .dash{ width:34px; height:1px; background:currentColor; opacity:.5; }
+  .word{
+    font-family:'Fraunces', serif; font-weight:600; font-optical-sizing:auto;
+    font-size: clamp(58px, 15vw, 190px); line-height:.86; letter-spacing:-.01em; margin:0;
+    display:flex; flex-wrap:wrap; align-items:flex-end; gap: clamp(6px,1.4vw,18px);
+  }
+  .word .ar{ font-size:.3em; font-weight:700; opacity:.65; transform:translateY(-.18em) rotate(-4deg); }
+  .tagline{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:400;
+    font-size: clamp(18px,2.6vw,28px); max-width:34ch; margin: 26px 0 0; opacity:.92;
+  }
+  .hero-foot{
+    margin-top:clamp(36px,8vw,72px); display:flex; flex-wrap:wrap; gap:28px 48px; align-items:flex-end;
+  }
+  .stamp{
+    display:inline-flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:600;
+    border:1px solid var(--line); border-radius:999px; padding:10px 18px; font-size:14px;
+  }
+  .stamp b{ font-size:18px; }
+  .stamp svg{ width:16px;height:16px; }
+  .scrollcue{ font-size:11px; letter-spacing:.2em; text-transform:uppercase; opacity:.6; display:flex; align-items:center; gap:8px; }
+  .scrollcue svg{ width:12px;height:18px; animation: bob 1.8s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(6px);} }
+
+  /* ---------- marquee ---------- */
+  .marquee{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); overflow:hidden; padding-block:18px; }
+  .marquee-track{ display:flex; gap:48px; width:max-content; animation: scroll 26s linear infinite; }
+  .marquee span{
+    font-family:'Fraunces',serif; font-style:italic; font-size:clamp(16px,2.6vw,26px);
+    white-space:nowrap; opacity:.85; display:flex; align-items:center; gap:48px;
+  }
+  @keyframes scroll{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+
+  /* ---------- section headers ---------- */
+  .head{ display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:clamp(28px,5vw,56px); }
+  .h2{
+    font-family:'Fraunces',serif; font-weight:600; font-size:clamp(34px,6vw,64px); line-height:1.02; margin:0;
+    max-width:14ch;
+  }
+  .idx{ font-family:'Fraunces',serif; font-style:italic; opacity:.55; font-size:14px; }
+
+  /* ---------- about ---------- */
+  .about-grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:clamp(28px,6vw,80px); align-items:start; }
+  @media (max-width:760px){ .about-grid{ grid-template-columns:1fr; } }
+  .lede{ font-size:clamp(17px,2.1vw,21px); line-height:1.6; max-width:46ch; }
+  .lede + .lede{ margin-top:1em; opacity:.85; }
+  .stats{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .stat{ border-top:1px solid var(--line); padding-top:14px; }
+  .stat b{ display:block; font-family:'Fraunces',serif; font-size:clamp(28px,4vw,40px); font-weight:600; }
+  .stat span{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; opacity:.65; }
+
+  /* ---------- grid (instagram-inspired tiles) ---------- */
+  .igrow{ display:flex; align-items:center; gap:10px; font-size:13px; letter-spacing:.04em; opacity:.75; margin-top:6px; }
+  .igrow svg{ width:15px;height:15px; }
+  .tiles{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(6px,1.4vw,14px); }
+  @media (max-width:640px){ .tiles{ grid-template-columns:repeat(2,1fr); } }
+  .tile{
+    position:relative; aspect-ratio:1/1; border-radius:14px; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    color:#f6f1e2;
+  }
+  .tile svg{ width:38%; height:38%; position:relative; z-index:2; }
+  .tile figcaption{
+    position:absolute; inset:auto 0 0 0; padding:10px 12px; font-size:12px; letter-spacing:.03em;
+    display:flex; justify-content:space-between; align-items:center;
+    background:linear-gradient(to top, rgba(0,0,0,.42), transparent);
+    transform:translateY(60%); opacity:0; transition:transform .3s ease, opacity .3s ease;
+  }
+  .tile:hover figcaption, .tile:focus-within figcaption{ transform:translateY(0); opacity:1; }
+  .tile .heart{ display:flex; align-items:center; gap:5px; }
+  .tile .heart svg{ width:13px;height:13px; }
+
+  /* ---------- menu ---------- */
+  .cards{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+  @media (max-width:900px){ .cards{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:480px){ .cards{ grid-template-columns:1fr; } }
+  .card{ background:var(--bg); padding:clamp(22px,3vw,32px); display:flex; flex-direction:column; gap:14px; min-height:220px; }
+  .card svg{ width:34px;height:34px; }
+  .card h3{ font-family:'Fraunces',serif; font-weight:600; font-size:20px; margin:0; }
+  .card p{ font-size:14px; opacity:.72; margin:0; line-height:1.5; }
+  .price{ margin-top:auto; font-size:12px; letter-spacing:.08em; text-transform:uppercase; opacity:.55; }
+  .price-note{ margin-top:24px; font-size:13px; opacity:.65; }
+
+  /* ---------- visit ---------- */
+  .visit-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,6vw,80px); align-items:start; }
+  @media (max-width:820px){ .visit-grid{ grid-template-columns:1fr; } }
+  .hours{ width:100%; border-collapse:collapse; }
+  .hours tr{ border-top:1px solid var(--line); }
+  .hours tr:last-child{ border-bottom:1px solid var(--line); }
+  .hours td{ padding:13px 0; font-size:15px; }
+  .hours td:last-child{ text-align:right; font-family:'Fraunces',serif; }
+  .hours tr.today td{ font-weight:700; }
+  .hours tr.today td:first-child::before{ content:'●'; color:var(--accent); font-size:8px; margin-right:8px; vertical-align:middle; }
+  .badges{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+  .badge{ border:1px solid var(--line); border-radius:999px; padding:8px 14px; font-size:12px; letter-spacing:.03em; display:flex; align-items:center; gap:7px; }
+  .badge svg{ width:13px;height:13px; }
+  .contact{ margin-top:26px; display:flex; flex-direction:column; gap:10px; font-size:15px; }
+  .contact a{ text-decoration:none; display:flex; align-items:center; gap:10px; width:fit-content; }
+  .contact a:hover{ text-decoration:underline; }
+  .contact svg{ width:16px;height:16px; flex:none; }
+  .mapbox{ border-radius:18px; overflow:hidden; border:1px solid var(--line); aspect-ratio:4/5; }
+  .mapbox iframe{ width:100%; height:100%; border:0; filter:grayscale(.15) contrast(1.02); }
+  .cta{
+    margin-top:26px; display:inline-flex; align-items:center; gap:10px;
+    background:var(--accent); color:#fff; padding:14px 24px; border-radius:999px;
+    font-size:14px; letter-spacing:.03em; text-decoration:none; border:none;
+  }
+  .cta svg{ width:15px;height:15px; }
+
+  /* ---------- reviews ---------- */
+  .reviews{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(18px,3vw,28px); }
+  @media (max-width:820px){ .reviews{ grid-template-columns:1fr; } }
+  .rev{ border-top:1px solid var(--line); padding-top:18px; }
+  .stars{ display:flex; gap:3px; margin-bottom:12px; }
+  .stars svg{ width:13px;height:13px; }
+  .rev p{ font-family:'Fraunces',serif; font-size:18px; line-height:1.45; margin:0 0 14px; }
+  .rev span{ font-size:12px; letter-spacing:.05em; text-transform:uppercase; opacity:.6; }
+
+  /* ---------- footer ---------- */
+  footer{ padding-block:clamp(56px,10vw,110px) clamp(30px,6vw,50px); }
+  .foot-word{
+    font-family:'Fraunces',serif; font-weight:600; font-size:clamp(46px,11vw,140px); line-height:.85; margin:0 0 28px;
+  }
+  .foot-grid{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:28px; border-top:1px solid var(--line); padding-top:26px; }
+  .foot-links{ display:flex; flex-wrap:wrap; gap:10px 28px; font-size:14px; }
+  .foot-links a{ text-decoration:none; opacity:.85; }
+  .foot-links a:hover{ text-decoration:underline; }
+  .fine{ font-size:12px; opacity:.55; }
+
+  ::selection{ background:var(--accent); color:#fff; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .marquee-track{ animation:none; }
+    .scrollcue svg{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<div class="status" id="status"><i></i><span id="statusText">checking hours…</span></div>
+<div class="mark" aria-hidden="true">S·C</div>
+
+<div class="clockrail" aria-hidden="true">
+  <div class="clockrail-track" id="rail">
+    <div class="clockrail-dot" id="railDot"></div>
+    <div class="clockrail-time" id="railTime">6:30 AM</div>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero wrap" id="top">
+  <p class="kicker"><span class="dash"></span>Specialty coffee · Madinah, KSA</p>
+  <h1 class="word">SAVVA <span class="ar" lang="ar">سافا</span></h1>
+  <p class="tagline">"A day in Savva is what you need to be Savva."</p>
+  <div class="hero-foot">
+    <div class="stamp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.6l-6.1 3 1.4-6.8-5.1-4.7 6.9-.8z"/></svg>
+      <b>4.7</b>&nbsp;·&nbsp;729 Google reviews
+    </div>
+    <div class="stamp">6:30 AM — 2 AM · open daily</div>
+    <div class="scrollcue">Scroll through the day
+      <svg viewBox="0 0 12 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 1v15M1 11l5 5 5-5"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>QUIET &amp; COZY ✦ DRIVE-THROUGH ✦ ETHIOPIAN OR COLOMBIAN ✦ MADINAH ✦ سافا ✦ NEVER TOO BITTER, NEVER TOO SWEET ✦</span>
+    <span>QUIET &amp; COZY ✦ DRIVE-THROUGH ✦ ETHIOPIAN OR COLOMBIAN ✦ MADINAH ✦ سافا ✦ NEVER TOO BITTER, NEVER TOO SWEET ✦</span>
+  </div>
+</div>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" data-t="0.16">
+  <div class="wrap about-grid">
+    <div>
+      <p class="idx">01 — The vibe</p>
+      <h2 class="h2">A calm corner that keeps late hours.</h2>
+      <p class="lede">Tucked into Zubairah Al Roumiah, Savva is the kind of place people come back to for the quiet — comfy seats indoors and out, unhurried mornings, and coffee that guests describe again and again as balanced: never too bitter, never too sweet.</p>
+      <p class="lede">Pick your bean, Ethiopian or Colombian, and let the rest of the day slow down. Open from sunrise past midnight, every day but Friday afternoon.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>4.7★</b><span>Google rating</span></div>
+      <div class="stat"><b>729</b><span>Google reviews</span></div>
+      <div class="stat"><b>3.6K</b><span>Instagram family</span></div>
+      <div class="stat"><b>19.5</b><span>Hours open a day</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ON THE GRID ============ -->
+<section id="grid" data-t="0.34">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="idx">02 — On the grid</p>
+        <h2 class="h2">What keeps getting reposted.</h2>
+      </div>
+      <a class="igrow" href="https://www.instagram.com/savva_cafe" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="4"/><path d="M8 6l1.5-2.5h5L16 6"/></svg>
+        @savva_cafe — 3,673 followers
+      </a>
+    </div>
+    <div class="tiles">
+      <figure class="tile" style="background:#8b9163">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f6f1e2" stroke-width="1.4"><path d="M6 10h12a1 1 0 0 1 1 1c0 5-3 9-7 9s-7-4-7-9a1 1 0 0 1 1-1Z"/><path d="M19 11h2a3.5 3.5 0 0 1 0 7h-2"/><path d="M9 6c-1-2 1-2.4.5-4M13 6c-1-2 1-2.4.5-4"/></svg>
+        <figcaption><span>Cappuccino</span><span class="heart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9.6-9C.7 8.6 2 5 5.4 4.4 7.8 4 9.9 5 12 7.2 14.1 5 16.2 4 18.6 4.4 22 5 23.3 8.6 21.6 12 19 16.4 12 21 12 21Z"/></svg> 812</span></figcaption>
+      </figure>
+      <figure class="tile" style="background:#4a141d">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f6f1e2" stroke-width="1.4"><path d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8" /><path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M4 12h16"/></svg>
+        <figcaption><span>Blueberry cheesecake</span><span class="heart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9.6-9C.7 8.6 2 5 5.4 4.4 7.8 4 9.9 5 12 7.2 14.1 5 16.2 4 18.6 4.4 22 5 23.3 8.6 21.6 12 19 16.4 12 21 12 21Z"/></svg> 1.1K</span></figcaption>
+      </figure>
+      <figure class="tile" style="background:#c4223a">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f6f1e2" stroke-width="1.4"><path d="M9 3h6l1 4H8l1-4Z"/><path d="M8 7h8l-1 13a1 1 0 0 1-1 1H10a1 1 0 0 1-1-1L8 7Z"/><path d="M9.5 11h5"/></svg>
+        <figcaption><span>Iced coffee of the day</span><span class="heart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9.6-9C.7 8.6 2 5 5.4 4.4 7.8 4 9.9 5 12 7.2 14.1 5 16.2 4 18.6 4.4 22 5 23.3 8.6 21.6 12 19 16.4 12 21 12 21Z"/></svg> 940</span></figcaption>
+      </figure>
+      <figure class="tile" style="background:#1b1712">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#e7d9a0" stroke-width="1.4"><circle cx="8" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M3 5h2l2 10h11"/><path d="M8 9h11l-1.5 6h-8"/></svg>
+        <figcaption><span>Drive-through run</span><span class="heart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9.6-9C.7 8.6 2 5 5.4 4.4 7.8 4 9.9 5 12 7.2 14.1 5 16.2 4 18.6 4.4 22 5 23.3 8.6 21.6 12 19 16.4 12 21 12 21Z"/></svg> 655</span></figcaption>
+      </figure>
+      <figure class="tile" style="background:#7f8a58">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f6f1e2" stroke-width="1.4"><rect x="3" y="14" width="18" height="2.5" rx="1"/><path d="M5 14V8a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v6"/><path d="M2 18.5h20"/></svg>
+        <figcaption><span>Laptop &amp; latte</span><span class="heart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9.6-9C.7 8.6 2 5 5.4 4.4 7.8 4 9.9 5 12 7.2 14.1 5 16.2 4 18.6 4.4 22 5 23.3 8.6 21.6 12 19 16.4 12 21 12 21Z"/></svg> 733</span></figcaption>
+      </figure>
+      <figure class="tile" style="background:#8a5a2b">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f6f1e2" stroke-width="1.4"><circle cx="8" cy="9" r="2.4"/><circle cx="15" cy="8" r="2"/><circle cx="17" cy="14" r="2.2"/><circle cx="9.5" cy="15.5" r="2.6"/></svg>
+        <figcaption><span>Madini cookies</span><span class="heart"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.6-9.6-9C.7 8.6 2 5 5.4 4.4 7.8 4 9.9 5 12 7.2 14.1 5 16.2 4 18.6 4.4 22 5 23.3 8.6 21.6 12 19 16.4 12 21 12 21Z"/></svg> 588</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MENU ============ -->
+<section id="menu" data-t="0.5">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="idx">03 — On the counter</p>
+        <h2 class="h2">Order this, then linger.</h2>
+      </div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 10h12a1 1 0 0 1 1 1c0 5-3 9-7 9s-7-4-7-9a1 1 0 0 1 1-1Z"/><path d="M19 11h2a3.5 3.5 0 0 1 0 7h-2"/></svg>
+        <h3>Cappuccino</h3>
+        <p>The one nearly every table orders — the house benchmark.</p>
+        <span class="price">Most popular</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8" /><path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/></svg>
+        <h3>Blueberry cheesecake</h3>
+        <p>The top-tagged treat on the Savva grid — dense, cold, unhurried.</p>
+        <span class="price">Reader favorite</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 3h6l1 4H8l1-4Z"/><path d="M8 7h8l-1 13a1 1 0 0 1-1 1H10a1 1 0 0 1-1-1L8 7Z"/></svg>
+        <h3>Coffee of the day</h3>
+        <p>Ethiopian or Colombian beans, your call, served over ice.</p>
+        <span class="price">Ask your barista</span>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="9" r="2.2"/><circle cx="15" cy="8" r="1.8"/><circle cx="17" cy="14" r="2"/><circle cx="9.5" cy="15" r="2.4"/></svg>
+        <h3>Madini cookies</h3>
+        <p>A Madinah original, baked in-house, gone before they cool.</p>
+        <span class="price">Local favorite</span>
+      </div>
+    </div>
+    <p class="price-note">SAR 20–40 per person, as reported by 189 guests.</p>
+  </div>
+</section>
+
+<!-- ============ VISIT ============ -->
+<section id="visit" data-t="0.72">
+  <div class="wrap visit-grid">
+    <div>
+      <p class="idx">04 — Find your seat</p>
+      <h2 class="h2" style="margin-bottom:26px">Sunrise to just past midnight.</h2>
+      <table class="hours" id="hoursTable">
+        <tbody>
+          <tr data-day="0"><td>Sunday</td><td>6:30 AM – 2 AM</td></tr>
+          <tr data-day="1"><td>Monday</td><td>6:30 AM – 2 AM</td></tr>
+          <tr data-day="2"><td>Tuesday</td><td>6:30 AM – 2 AM</td></tr>
+          <tr data-day="3"><td>Wednesday</td><td>6:30 AM – 2 AM</td></tr>
+          <tr data-day="4"><td>Thursday</td><td>6:30 AM – 2 AM</td></tr>
+          <tr data-day="5"><td>Friday</td><td>1 PM – 2 AM</td></tr>
+          <tr data-day="6"><td>Saturday</td><td>6:30 AM – 2 AM</td></tr>
+        </tbody>
+      </table>
+      <div class="badges">
+        <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10l8-6 8 6v10"/><path d="M9 20v-7h6v7"/></svg>Dine-in</span>
+        <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M3 5h2l2 10h11"/><path d="M8 9h11l-1.5 6h-8"/></svg>Drive-through</span>
+        <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>No-contact delivery</span>
+        <span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="6" r="2"/><circle cx="12" cy="15" r="6"/><path d="M12 9v3l3 2"/></svg>Wheelchair accessible</span>
+      </div>
+      <div class="contact">
+        <a href="tel:+966564370303"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5c0 9 6 15 15 15l3-4-6-3-2 2c-3-1.5-5.5-4-7-7l2-2-3-6Z"/></svg>+966 56 437 0303</a>
+        <a href="https://maps.app.goo.gl/geB2uSVz2UD7soM46?g_st=ic" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-7.4 7-13a7 7 0 1 0-14 0c0 5.6 7 13 7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>Zubairah Al Roumiah, Bir Uthman, Madinah 42331</a>
+        <a href="https://www.instagram.com/savva_cafe" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="4"/></svg>@savva_cafe</a>
+      </div>
+      <a class="cta" href="https://maps.app.goo.gl/geB2uSVz2UD7soM46?g_st=ic" target="_blank" rel="noopener">
+        Get directions
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="mapbox">
+      <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Savva Coffee map" src="https://www.google.com/maps?q=24.4926931,39.5823565&z=16&output=embed"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section id="reviews" data-t="0.86">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="idx">05 — Words from the table</p>
+        <h2 class="h2">729 reviews, four-point-seven stars.</h2>
+      </div>
+    </div>
+    <div class="reviews">
+      <div class="rev">
+        <div class="stars">★★★★★</div>
+        <p>"Cozy and beautifully designed, with a calm, inviting atmosphere."</p>
+        <span>Mani, Google review</span>
+      </div>
+      <div class="rev">
+        <div class="stars">★★★★★</div>
+        <p>"Renewed decor, comfy indoor and outdoor seats, great service."</p>
+        <span>Local Guide, 238 reviews</span>
+      </div>
+      <div class="rev">
+        <div class="stars">★★★★★</div>
+        <p>"The iced coffee of the day was phenomenal — not too bitter, not too sour."</p>
+        <span>Lujain J., Local Guide</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer id="say-hi" data-t="1">
+  <div class="wrap">
+    <h2 class="foot-word">See you<br>past midnight.</h2>
+    <div class="foot-grid">
+      <div class="foot-links">
+        <a href="tel:+966564370303">+966 56 437 0303</a>
+        <a href="https://www.instagram.com/savva_cafe" target="_blank" rel="noopener">Instagram — @savva_cafe</a>
+        <a href="https://maps.app.goo.gl/geB2uSVz2UD7soM46?g_st=ic" target="_blank" rel="noopener">Zubairah Al Roumiah, Madinah</a>
+      </div>
+      <p class="fine">Savva · سافا — specialty coffee, Madinah. Site built from the shop's public Instagram &amp; Google profile.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- scroll-driven day → night theme ---------- */
+  var stops = [
+    { t:0,    bg:[242,233,216], time:[6,30]  },
+    { t:0.22, bg:[236,220,174], time:[10,0]  },
+    { t:0.5,  bg:[127,138,88],  time:[14,30] },
+    { t:0.75, bg:[74,20,29],    time:[20,0]  },
+    { t:1,    bg:[22,17,12],    time:[26,0]  }
+  ];
+  var dark = [246,241,226], light = [36,28,18];
+
+  function lerp(a,b,f){ return a + (b-a)*f; }
+  function mix(c1,c2,f){ return [lerp(c1[0],c2[0],f), lerp(c1[1],c2[1],f), lerp(c1[2],c2[2],f)]; }
+  function toCss(c){ return 'rgb('+Math.round(c[0])+','+Math.round(c[1])+','+Math.round(c[2])+')'; }
+  function luminance(c){
+    function ch(v){ v/=255; return v<=.03928? v/12.92 : Math.pow((v+.055)/1.055,2.4); }
+    return .2126*ch(c[0]) + .7152*ch(c[1]) + .0722*ch(c[2]);
+  }
+  function fmtTime(hoursFloat){
+    var h = ((Math.floor(hoursFloat) % 24) + 24) % 24;
+    var m = Math.round((hoursFloat - Math.floor(hoursFloat)) * 60);
+    if (m === 60){ m = 0; h = (h+1) % 24; }
+    var ampm = h < 12 ? 'AM' : 'PM';
+    var h12 = h % 12; if (h12 === 0) h12 = 12;
+    return h12 + ':' + (m<10?'0':'') + m + ' ' + ampm;
+  }
+
+  var root = document.documentElement;
+  var railDot = document.getElementById('railDot');
+  var railTime = document.getElementById('railTime');
+  var railTrack = document.getElementById('rail');
+  var ticking = false;
+
+  function update(){
+    ticking = false;
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var t = max > 0 ? window.scrollY / max : 0;
+    t = Math.max(0, Math.min(1, t));
+
+    var i = 0;
+    while(i < stops.length-2 && t > stops[i+1].t) i++;
+    var a = stops[i], b = stops[i+1];
+    var span = (t - a.t) / (b.t - a.t || 1);
+
+    var bg = mix(a.bg, b.bg, span);
+    var lum = luminance(bg);
+    var fg = lum > 0.52 ? light : dark;
+
+    root.style.setProperty('--bg', toCss(bg));
+    root.style.setProperty('--fg', toCss(fg));
+
+    var hoursA = a.time[0] + a.time[1]/60;
+    var hoursB = b.time[0] + b.time[1]/60;
+    var hoursNow = lerp(hoursA, hoursB, span);
+    if (railTime) railTime.textContent = fmtTime(hoursNow);
+    if (railDot && railTrack){
+      var h = railTrack.clientHeight;
+      railDot.style.top = (t*h) + 'px';
+    }
+  }
+
+  window.addEventListener('scroll', function(){
+    if(!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, { passive:true });
+  window.addEventListener('resize', update);
+  update();
+
+  /* ---------- live open/closed status (Asia/Riyadh) ---------- */
+  function riyadhNow(){
+    var parts = new Intl.DateTimeFormat('en-US', {
+      timeZone:'Asia/Riyadh', weekday:'short', hour:'2-digit', minute:'2-digit', hour12:false
+    }).formatToParts(new Date());
+    var map = {}; parts.forEach(function(p){ map[p.type]=p.value; });
+    var days = {Sun:0,Mon:1,Tue:2,Wed:3,Thu:4,Fri:5,Sat:6};
+    return { day: days[map.weekday], hours: parseInt(map.hour,10) + parseInt(map.minute,10)/60 };
+  }
+  function isOpen(){
+    var now = riyadhNow();
+    // Friday opens at 13:00, every other day opens at 06:30. Every day closes 02:00 the next morning,
+    // so the 00:00–02:00 window is always open (the previous day's hours run past midnight).
+    if (now.hours < 2) return true;
+    var openAt = now.day === 5 ? 13 : 6.5;
+    return now.hours >= openAt;
+  }
+  var statusEl = document.getElementById('status');
+  var statusText = document.getElementById('statusText');
+  function paintStatus(){
+    var open = isOpen();
+    statusEl.classList.toggle('closed', !open);
+    var n = riyadhNow();
+    statusText.textContent = open ? 'Open now · till 2 AM' : 'Closed · opens ' + (n.day===5 ? '1 PM' : '6:30 AM');
+  }
+  paintStatus();
+  setInterval(paintStatus, 60000);
+
+  /* ---------- highlight today's row ---------- */
+  var todayIdx = riyadhNow().day;
+  var row = document.querySelector('#hoursTable tr[data-day="'+todayIdx+'"]');
+  if (row) row.classList.add('today');
+})();
+</script>
+</body>
+</html>
