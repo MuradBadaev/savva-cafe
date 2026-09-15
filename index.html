@@ -157,6 +157,30 @@
   .stat b{ display:block; font-family:'Fraunces',serif; font-size:clamp(28px,4vw,40px); font-weight:600; }
   .stat span{ font-size:12px; letter-spacing:.06em; text-transform:uppercase; opacity:.65; }
 
+  /* ---------- gallery (real photos) ---------- */
+  .gallery-hero{
+    position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--line);
+    aspect-ratio:16/9; margin:0;
+  }
+  .gallery-hero img{ width:100%; height:100%; object-fit:cover; display:block; filter:contrast(1.03) saturate(1.06); }
+  .gallery-hero figcaption{
+    position:absolute; inset:auto 0 0 0; padding:clamp(16px,3vw,30px);
+    background:linear-gradient(to top, rgba(10,8,5,.62), transparent 65%);
+    color:#f6f1e2; font-family:'Fraunces',serif; font-style:italic;
+    font-size:clamp(14px,2vw,20px);
+  }
+  .gallery-pair{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(6px,1.4vw,14px); margin-top:clamp(6px,1.4vw,14px); }
+  @media (max-width:640px){ .gallery-pair{ grid-template-columns:1fr; } }
+  .gallery-pair figure{
+    position:relative; margin:0; border-radius:18px; overflow:hidden; border:1px solid var(--line);
+    aspect-ratio:4/5;
+  }
+  .gallery-pair img{ width:100%; height:100%; object-fit:cover; display:block; filter:contrast(1.02); }
+  .gallery-pair figcaption{
+    position:absolute; inset:auto 0 0 0; padding:12px 16px; font-size:12px; letter-spacing:.03em;
+    color:#f6f1e2; background:linear-gradient(to top, rgba(10,8,5,.55), transparent 70%);
+  }
+
   /* ---------- grid (instagram-inspired tiles) ---------- */
   .igrow{ display:flex; align-items:center; gap:10px; font-size:13px; letter-spacing:.04em; opacity:.75; margin-top:6px; }
   .igrow svg{ width:15px;height:15px; }
@@ -283,7 +307,7 @@
 </div>
 
 <!-- ============ ABOUT ============ -->
-<section id="about" data-t="0.16">
+<section id="about" data-t="0.14">
   <div class="wrap about-grid">
     <div>
       <p class="idx">01 — The vibe</p>
@@ -300,12 +324,38 @@
   </div>
 </section>
 
-<!-- ============ ON THE GRID ============ -->
-<section id="grid" data-t="0.34">
+<!-- ============ GALLERY (real photos) ============ -->
+<section id="gallery" data-t="0.26">
   <div class="wrap">
     <div class="head">
       <div>
-        <p class="idx">02 — On the grid</p>
+        <p class="idx">02 — Inside Savva</p>
+        <h2 class="h2">Not a render. This is the door you'll walk through.</h2>
+      </div>
+    </div>
+    <figure class="gallery-hero">
+      <img src="photos/storefront-night.jpg" alt="Savva Coffee storefront at night, SAVVA and سافا signage lit above the wooden entrance" loading="lazy" decoding="async" width="1600" height="900">
+      <figcaption>Zubairah Al Roumiah, lit long past sundown — open till 2&nbsp;AM.</figcaption>
+    </figure>
+    <div class="gallery-pair">
+      <figure>
+        <img src="photos/storefront-day.jpg" alt="Daytime view of the Savva Coffee entrance with plants and outdoor seating" loading="lazy" decoding="async" width="1206" height="1122">
+        <figcaption>Morning light on the terrace tables</figcaption>
+      </figure>
+      <figure>
+        <img src="photos/interior.jpg" alt="Savva Coffee lounge seating with cream sofas, arched windows and plants" loading="lazy" decoding="async" width="597" height="800">
+        <figcaption>The lounge — where an hour turns into three</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ON THE GRID ============ -->
+<section id="grid" data-t="0.4">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="idx">03 — On the grid</p>
         <h2 class="h2">What keeps getting reposted.</h2>
       </div>
       <a class="igrow" href="https://www.instagram.com/savva_cafe" target="_blank" rel="noopener">
@@ -343,11 +393,11 @@
 </section>
 
 <!-- ============ MENU ============ -->
-<section id="menu" data-t="0.5">
+<section id="menu" data-t="0.54">
   <div class="wrap">
     <div class="head">
       <div>
-        <p class="idx">03 — On the counter</p>
+        <p class="idx">04 — On the counter</p>
         <h2 class="h2">Order this, then linger.</h2>
       </div>
     </div>
@@ -385,7 +435,7 @@
 <section id="visit" data-t="0.72">
   <div class="wrap visit-grid">
     <div>
-      <p class="idx">04 — Find your seat</p>
+      <p class="idx">05 — Find your seat</p>
       <h2 class="h2" style="margin-bottom:26px">Sunrise to just past midnight.</h2>
       <table class="hours" id="hoursTable">
         <tbody>
@@ -425,7 +475,7 @@
   <div class="wrap">
     <div class="head">
       <div>
-        <p class="idx">05 — Words from the table</p>
+        <p class="idx">06 — Words from the table</p>
         <h2 class="h2">729 reviews, four-point-seven stars.</h2>
       </div>
     </div>
